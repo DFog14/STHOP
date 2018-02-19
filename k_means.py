@@ -81,6 +81,7 @@ def array_generator(json_data):
 def k_means_cluster(in_array):
     np.random.seed(5)
     fignum = 1
+    titles = ['8 cluster', '3 cluster', '3 cluster, bad init']
     estimators = [('k_means_iris_8', KMeans(n_clusters=8)),
                   ('k_means_iris_3', KMeans(n_clusters=3)),
                   ('k_means_iris_bad_init', KMeans(n_clusters=3, n_init=1, init='random'))]
@@ -103,26 +104,6 @@ def k_means_cluster(in_array):
 
     fig = plt.figure(fignum, figsize=(4, 3))
     ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
-
-    for name, label in [('Setosa', 0), ('Versicolour', 1), ('Virginica', 2)]:
-        ax.text3D(X[y == label, 3].mean(),
-                      X[y == label, 0].mean(),
-                      X[y == label, 2].mean() + 2, name,
-                      horizontalalignment='center',
-                      bbox=dict(alpha=.2, edgecolor='w', facecolor='w'))
-
-            # Reorder the labels to have colors matching the cluster results
-    y = np.choose(y, [1, 2, 0]).astype(np.float)
-    ax.scatter(X[:, 3], X[:, 0], X[:, 2], c=y, edgecolor='k')
-
-    ax.w_xaxis.set_ticklabels([])
-    ax.w_yaxis.set_ticklabels([])
-    ax.w_zaxis.set_ticklabels([])
-    ax.set_xlabel('Cipher')
-    ax.set_ylabel('IPv4')
-    ax.set_zlabel('Version')
-    ax.set_title('Ground Truth')
-    ax.dist = 12
 
     fig.show()
 
