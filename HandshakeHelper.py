@@ -3,7 +3,7 @@ import sys
 import re
 import socket
 import ssl
-from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool as Pool
 import json
 
 
@@ -15,7 +15,7 @@ class HandshakeHelper(object):
 
     def domain_reader(self, file):
         """
-        Extracts all domains from given file and wraps them as a json object.
+        Extracts all domains from given file.
         :param file: File of any type containing any amount of domains.
         :return: None
         """
@@ -63,5 +63,5 @@ class HandshakeHelper(object):
         :param domains: List of Domains
         :return: JSON encoded object
         """
-        pool = Pool()
+        pool = Pool(250)
         return json.dumps(pool.map(self.extract_data, domains))
