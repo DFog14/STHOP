@@ -1,0 +1,35 @@
+import struct
+from ctypes import *
+
+class IP(Structure):
+    _fields_ = [
+        ("version",         c_ubyte, 4),    # IP Version
+        ("ihl",             c_ubyte, 4),    # Header Length
+        ("tos",             c_ubyte),       # Type of Service
+        ("len",             c_ushort),      # Total Length
+        ("id",              c_ushort),      # Identification
+        ("offset",          c_ushort),      # Fragment Offset
+        ("ttl",             c_byte),        # Time to Live
+        ("protocol_num",    c_ubyte),       # Protocol
+        ("sum",             c_ushort),      # Header Checksum
+        ("src",             c_ulong),       # Source IP Address
+        ("dst",             c_ulong)        # Destination IP Address
+    ]
+
+    def __new__(self, socket_buffer=None):
+        return self.from_buffer_copy(socket_buffer)
+
+    def __init__(self, socket_buffer=None):
+        # map protocol constants to their names
+        self.protocol_map = {
+                6: "TCP" # TCP Protocol Constant, RFC 793
+        }
+
+        self.src_address = socket.inet_ntoa(struct.pack("<L", self.src))
+        self.dst_address = socket.inet_ntoa(struct.pack("<L", self.dst))
+
+        try:
+            self.protocol = self.protocol_map[self.protocol_num]
+        except:
+            self.protocol = str(self.protocol_num)
+
