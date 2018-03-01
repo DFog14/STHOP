@@ -8,6 +8,7 @@ import random
 import socket
 import struct
 import dpkt
+import csv
 
 # Requesting the number of packets required to be created later. 
 
@@ -47,27 +48,36 @@ def json_packets():
         ipv4 = socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)));
     #new_data = {}
     #new_data[''] = []
-        new_data[''].append({"domain": domain, "ip_address": ipv4, "ciphersuite:" :"", "version": random.choice(tls_versions), "ciphersuite:" : random.choice(ciphersuites)})
+        new_data[''].append({"domain": domain, "ip_address": ipv4, "version": random.choice(tls_versions), "ciphersuite" : random.choice(ciphersuites)})
     
-    with open('new_data.json','w') as outfile:
+    with open('new_data.pcap','w') as outfile:
         json.dump(new_data, outfile, indent = 0)
 
 """ Section Name : Random Packets PCAP """""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """ Below Section provides the code for the generation of the pcap file, which is also used to verify that the data dump works on the generated data. """
 
-def pcap_packets():
-    infilepcap = open('original.pcap','rb')
-    reader = dpkt.pcap.Reader(infilepcap)
+""" Attempt Using DPKT """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""
+def pcap_packets(): 
+    ipv4 = socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)));
+    new_data = {}
+    new_data[''] = []
+    for i in range(0,int(num_packets)):
+        domain = "fake"+str(i)+".com";
+        ipv4 = socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)));
+
 
     outfilepcap = open('new_data.pcap', 'wb')
     writer = dpkt.pcap.Writer(outfilepcap)
+"""
 
-""" Main Function """
+""" Main Function """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 def main():
     json_packets()
     #for i in range(0,int(num_packets)):
         #randome_packets()
+    pcap_packets()
 """ Running the Script """
 main()
 

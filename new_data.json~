@@ -1,1 +1,0 @@
-{"": [{"domain": "fake0.com", "ip_address": "203.137.151.36", "ciphersuite:": "ECDHE-RSA-AES128-SHA", "version": "TLSv1.1"}, {"domain": "fake1.com", "ip_address": "45.250.217.145", "ciphersuite:": "ECDHE-RSA-AES128-GCM-SHA256", "version": "SSLv2.0"}]}

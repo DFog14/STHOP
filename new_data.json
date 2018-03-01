@@ -2,21 +2,33 @@
 "": [
 {
 "domain": "fake0.com",
-"ip_address": "232.2.13.221",
-"ciphersuite:": "ECDHE-RSA-AES256-GCM-SHA384",
-"version": "TLSv1.2"
+"ip_address": "242.41.239.7",
+"version": "SSLv1.0",
+"ciphersuite": "AES128-SHA"
 },
 {
 "domain": "fake1.com",
-"ip_address": "23.172.182.114",
-"ciphersuite:": "ECDHE-RSA-AES128-GCM-SHA256",
-"version": "SSLv3.0"
+"ip_address": "32.253.193.141",
+"version": "SSLv1.0",
+"ciphersuite": "DES-CBC3-SHA"
 },
 {
 "domain": "fake2.com",
-"ip_address": "1.156.62.244",
-"ciphersuite:": "DHE-RSA-AES128-SHA256",
-"version": "SSLv2.0"
+"ip_address": "28.4.188.34",
+"version": "TLSv1.0",
+"ciphersuite": "ECDHE-RSA-AES128-GCM-SHA256"
+},
+{
+"domain": "fake3.com",
+"ip_address": "123.24.44.25",
+"version": "TLSv1.1",
+"ciphersuite": "ECDHE-RSA-AES128-GCM-SHA256"
+},
+{
+"domain": "fake4.com",
+"ip_address": "208.91.57.6",
+"version": "SSLv2.0",
+"ciphersuite": "AES128-GCM-SHA256"
 }
 ]
 }
