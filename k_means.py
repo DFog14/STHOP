@@ -7,28 +7,30 @@ from sklearn.cluster import KMeans
 
 TLS_Key = {"TLSv1.2" : 2, "TLSv1.1" : 1, "TLSv1" : 0}
 Cipher_Key = {
-        'ECDHE-RSA-AES128-GCM-SHA256' : 0,
-        'ECDHE-ECDSA-AES128-GCM-SHA256' : 1,
-        'ECDHE-ECDSA-AES256-GCM-SHA384' : 2,
-        'AES128-GCM-SHA256' : 3,
-        'ECDHE-RSA-AES256-SHA384' : 4,
-        'ECDHE-RSA-AES256-GCM-SHA384' : 5,
-        'AES256-SHA256' : 6,
-        'ECDHE-RSA-AES128-SHA256' : 7,
-        'DHE-RSA-AES256-GCM-SHA384' : 8,
-        'AES128-SHA' : 9,
-        'DHE-RSA-AES128-SHA' : 10,
-        'AES256-GCM-SHA384' : 11,
-        'AES256-SHA' : 12,
-        'ECDHE-RSA-AES256-SHA' : 13,
-        'ECDHE-RSA-AES128-SHA' : 14,
-        'DHE-RSA-AES256-SHA' : 15,
-        'AES128-SHA256' : 16,
-        'DHE-RSA-AES128-GCM-SHA256' : 17,
-        'DHE-RSA-AES256-SHA256' : 18,
-        'CAMELLIA256-SHA' : 19,
-        'DHE-RSA-CAMELLIA256-SHA' : 20
-        }
+    'ECDHE-RSA-AES128-GCM-SHA256' : 0,
+    'ECDHE-ECDSA-AES128-GCM-SHA256' : 1,
+    'ECDHE-ECDSA-AES256-GCM-SHA384' : 2,
+    'AES128-GCM-SHA256' : 3,
+    'ECDHE-RSA-AES256-SHA384' : 4,
+    'ECDHE-RSA-AES256-GCM-SHA384' : 5,
+    'AES256-SHA256' : 6,
+    'ECDHE-RSA-AES128-SHA256' : 7,
+    'DHE-RSA-AES256-GCM-SHA384' : 8,
+    'AES128-SHA' : 9,
+    'DHE-RSA-AES128-SHA' : 10,
+    'AES256-GCM-SHA384' : 11,
+    'AES256-SHA' : 12,
+    'ECDHE-RSA-AES128-SHA' : 13,
+    'DHE-RSA-AES256-SHA' : 14,
+    'AES128-SHA256' : 15,
+    'ECDHE-RSA-AES256-SHA' : 16,
+    'DHE-RSA-AES128-GCM-SHA256' : 17,
+    'DHE-RSA-AES256-SHA256' : 18,
+    'CAMELLIA256-SHA' : 19,
+    'DHE-RSA-CAMELLIA256-SHA' : 20,
+    'DHE-RSA-AES128-SHA256' : 21,
+    'ECDHE-ECDSA-AES128-SHA' : 22
+}
 
 #remove null and None entries. They break enumeration of the json data.
 def removeNone(in_file):
@@ -78,6 +80,35 @@ def array_generator(json_data):
         sort_vectors[i,2] = version
     return sort_vectors
 
+def cipher_histogram_generator(in_array):
+    fig = plt.figure(5)
+    plt.hist(in_array[:, 0], bins=np.arange(min(in_array[:, 0]), max(in_array[:, 0]) + 1, 1))
+    plt.xlabel('Cipher Suite(Numerically Keyed)')
+    plt.ylabel('# of Domains per Cipher')
+    plt.show()
+
+#Not sure what to think about this plot. Centers seem oddly places
+def k_means_cluster2D(in_array):
+    np.random.seed(200)
+
+    K = KMeans(n_clusters=3)
+    K.fit(in_array[:, [0, 2]]);
+    labels = K.predict(in_array[:, [0, 2]])
+    centers = K.cluster_centers_
+
+    fig = plt.figure(6)
+    colmap = {1: 'r', 2: 'g', 3: 'b'}
+    colors = map(lambda x: colmap[x+1], labels)
+    plt.scatter(in_array[:,0], in_array[:,2],  alpha=0.5, edgecolor='k')
+
+    for idx, center in enumerate(centers):
+        plt.scatter(*center, color = colmap[idx+1])
+    plt.xlim(0, 22)
+    plt.ylim(0, 2)
+    plt.xlabel('Cipher Suite(Numerically Keyed)')
+    plt.ylabel('TLS Version(Numerically Keyed)')
+    plt.show()
+
 def k_means_cluster(in_array):
     np.random.seed(5)
     fignum = 1
@@ -92,9 +123,9 @@ def k_means_cluster(in_array):
         labels = est.labels_
 
         ax.scatter(in_array[:, 0 ], in_array[:, 1], in_array[:, 2], c=labels.astype(np.float), edgecolor='k')
-        ax.w_xaxis.set_ticklabels([])
-        ax.w_yaxis.set_ticklabels([])
-        ax.w_zaxis.set_ticklabels([])
+#        ax.w_xaxis.set_ticklabels([0, 22])
+#        ax.w_yaxis.set_ticklabels([])
+        ax.w_zaxis.set_ticklabels([0, 1, 2])
         ax.set_xlabel('Cipher')
         ax.set_ylabel('IPv4')
         ax.set_zlabel('Version')
@@ -104,14 +135,22 @@ def k_means_cluster(in_array):
 
     fig = plt.figure(fignum, figsize=(4, 3))
     ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
-
+    ax.set_xlim(0, 22)
+    ax.set_zlim(0, 1)
     plt.show()
 
 def main():
-    json_data = removeNone('output.txt')
+    json_data = removeNone('malicious_output.json')
     #unique_cipher(json_data)
     arr = array_generator(json_data)
-    k_means_cluster(arr)
+    k_means_cluster2D(arr)
+    #cipher_histogram_generator(arr)
+
+    #These prints outs give the predicted centers for euclidan distance,
+    K = KMeans(n_clusters=3)
+    print(K.fit(arr))
+    print("labels: {}".format(K.predict(arr)))
+    print("centroids: {}".format(K.cluster_centers_))
 
 if __name__ == '__main__':
     main() 
