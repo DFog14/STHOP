@@ -11,6 +11,7 @@ import traceback
 import datetime
 from scapy.all import *
 import binascii
+import datetime
 
 """ Requesting the number of packets required to be created later. """
 
@@ -32,13 +33,55 @@ cipher_sslv3 = ["NULL-MD5","NULL-SHA","EXP-RC4-MD5","RC4-MD5","RC4-SHA","EXP-RC2
 """ Section Name: Random Number of Packets (PCAP) """""""""""""""""""""""""""""""""""""""
 
 def pcap_packets():
-    new_data = []
+    data = 'I am sending test data, please check and reply';
     for i in range(0, int(num_packets)):
+        ts = time.time();
+        timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        mac_src = "%02x:%02x:%02x:%02x:%02x:%02x" % (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)); 
+        mac_dst = "%02x:%02x:%02x:%02x:%02x:%02x" % (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255));
         domain = str("fake"+str(i)+".com");
         ip_src = socket.inet_ntoa(struct.pack('>I',random.randint(1, 0xffffffff)));
         ip_dst = socket.inet_ntoa(struct.pack('>I',random.randint(1, 0xffffffff)));
         version = random.choice(tls_versions);
-        
+        if version == "TLSv1.0":
+            cipher = random.choice(cipher_tlsv0);
+            packet = Ether(src = mac_src, dst = mac_dst)/IP(src = ip_src, dst = ip_dst)/Raw(load = data);
+            hexdump(packet)
+            a = ("newfile"+str(i)+".pcap")
+            wrpcap(a,packet)
+        elif version == "TLSv1.1":
+            cipher = random.choice(cipher_tlsv1);
+            packet = Ether(src = mac_src, dst = mac_dst)/IP(src = ip_src, dst = ip_dst)/Raw(load = data);
+            hexdump(packet)
+            a = ("newfile"+str(i)+".pcap")
+            wrpcap(a,packet)
+        elif version == "TLSv1.2":
+            cipher = random.choice(cipher_tlsv2);
+            packet = Ether(src = mac_src, dst = mac_dst)/IP(src = ip_src, dst = ip_dst)/Raw(load = data);
+            hexdump(packet)
+            a = ("newfile"+str(i)+".pcap")
+            wrpcap(a,packet)
+        elif version == "SSLv1.0":
+            cipher = random.choice(cipher_sslv1);
+            packet = Ether(src = mac_src, dst = mac_dst)/IP(src = ip_src, dst = ip_dst)/Raw(load = data);
+            hexdump(packet)
+            a = ("newfile"+str(i)+".pcap")
+            wrpcap(a,packet)
+        elif version == "SSLv2.0":
+            cipher = random.choice(cipher_sslv2);
+            packet = Ether(src = mac_src, dst = mac_dst)/IP(src = ip_src, dst = ip_dst)/Raw(load = data);
+            hexdump(packet)
+            a = ("newfile"+str(i)+".pcap")
+            wrpcap(a,packet)
+        elif version == "SSLv3.0":
+            cipher = random.choice(cipher_sslv3);
+            packet = Ether(src = mac_src, dst = mac_dst)/IP(src = ip_src, dst = ip_dst)/Raw(load = data);
+            hexdump(packet)
+            a = ("newfile"+str(i)+".pcap")
+            wrpcap(a,packet)
+
+
+
 """ Main Function """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 def main():
